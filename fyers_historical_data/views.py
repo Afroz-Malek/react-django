@@ -19,6 +19,8 @@ from .serializers import (
 
 import logging
 
+from .kafka_producer import publish_historical_data_request
+
 logger = logging.getLogger(__name__)
 
 
@@ -167,11 +169,15 @@ class HistoricalDataRequestView(APIView):
             )
             
             logger.info(f"Historical data request created: {historical_request.id}")
-            
-            # TODO: Trigger Celery task
-            # from .tasks import fetch_historical_data_task
-            # fetch_historical_data_task.delay(historical_request.id)
-            
+
+            # Publish to Kafka — consumer will fetch from Fyers and store results
+            kafka_published = publish_historical_data_request(historical_request)
+            if not kafka_published:
+                logger.warning(
+                    f"Request {historical_request.id} saved to DB but Kafka publish failed. "
+                    "Consumer will not process it until Kafka is available."
+                )
+
             return Response({
                 'status': 'success',
                 'message': 'Historical data fetch request submitted successfully',

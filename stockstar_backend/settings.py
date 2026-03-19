@@ -208,6 +208,24 @@ CACHES = {
     }
 }
 
+# ============================================================================
+# KAFKA CONFIGURATION
+# ============================================================================
+
+KAFKA_BOOTSTRAP_SERVERS = config('KAFKA_BOOTSTRAP_SERVERS', default='localhost:9092')
+KAFKA_CONSUMER_GROUP_ID = config('KAFKA_CONSUMER_GROUP_ID', default='stockstar-historical-data')
+
+# Topic names
+KAFKA_TOPICS = {
+    'HISTORICAL_DATA_REQUESTS': 'historical_data_requests',
+    'HISTORICAL_DATA_RESULTS': 'historical_data_results',
+    'HISTORICAL_DATA_STATUS': 'historical_data_status',
+}
+
+# ============================================================================
+# END KAFKA CONFIGURATION
+# ============================================================================
+
 # Security Settings (for production)
 if not DEBUG:
     SECURE_SSL_REDIRECT = True
